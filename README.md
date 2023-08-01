@@ -40,6 +40,7 @@ Run app with 5 goroutines, show log, stop db1:
 
 ![fail_bg5](assets/fail_bg5.png)
 
+#### ZERO DOWNTIME
 With [AcquireRetryOnceFunc()](storage.go) for one retry only:
 
 ![fail_bg5_retry](assets/fail_bg5_retry.png)
