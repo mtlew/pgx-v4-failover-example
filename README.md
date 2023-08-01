@@ -33,3 +33,9 @@ F5 again (db1 data):
 Source: https://github.com/jackc/pgx/pull/545
 
 Just `connString = "postgres://postgres:example@localhost:5436,localhost:5437/postgres?target_session_attrs=read-write"`
+
+### Background process
+
+Run app with 5 goroutines, show log, stop db1:
+
+![fail_bg5](assets/fail_bg5.png)

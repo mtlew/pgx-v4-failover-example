@@ -23,10 +23,9 @@ func (p *ping) run() {
 
 		if err != nil {
 			log.Println(fmt.Sprintf("Background: Error, %s!", err.Error()))
-			continue
+		} else {
+			log.Println(fmt.Sprintf("Background: ID: %s, Title: %s", row.ID, row.Title))
 		}
-		log.Println(fmt.Sprintf("Background: ID: %s, Title: %s", row.ID, row.Title))
-
 		time.Sleep(10 * time.Millisecond)
 	}
 }
