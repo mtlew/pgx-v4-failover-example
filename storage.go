@@ -19,36 +19,46 @@ type test struct {
 }
 
 func (s *storage) first() (test, error) {
-	var row test
+	ctx := context.Background()
 
-	rows, _ := s.conn.Query(context.Background(), "SELECT id, title FROM test LIMIT 1")
-	defer rows.Close()
-
-	for rows.Next() {
-		err := rows.Scan(&row.ID, &row.Title)
-		if err != nil {
-			return row, err
+	first := test{}
+	err := s.conn.AcquireFunc(ctx, func(conn *pgxpool.Conn) error {
+		row := conn.QueryRow(ctx, "SELECT id, title FROM test LIMIT 1")
+		if errScan := row.Scan(&first.ID, &first.Title); errScan != nil {
+			return errScan
 		}
-		break
+		return nil
+	})
+	if err != nil {
+		return first, err
 	}
-
-	return row, rows.Err()
+	return first, nil
 }
 
 func (s *storage) list() ([]test, error) {
+	ctx := context.Background()
+
 	tests := make([]test, 0)
+	err := s.conn.AcquireFunc(ctx, func(conn *pgxpool.Conn) error {
+		rows, errQuery := conn.Query(ctx, "SELECT id, title FROM test LIMIT 100")
+		defer rows.Close()
 
-	rows, _ := s.conn.Query(context.Background(), "SELECT id, title FROM test")
-	defer rows.Close()
-
-	for rows.Next() {
-		var row test
-		err := rows.Scan(&row.ID, &row.Title)
-		if err != nil {
-			return tests, err
+		if errQuery != nil {
+			return errQuery
 		}
-		tests = append(tests, row)
-	}
 
-	return tests, rows.Err()
+		for rows.Next() {
+			var row test
+			if errScan := rows.Scan(&row.ID, &row.Title); errScan != nil {
+				return errScan
+			}
+			tests = append(tests, row)
+		}
+
+		return rows.Err()
+	})
+	if err != nil {
+		return tests, err
+	}
+	return tests, nil
 }
