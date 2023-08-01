@@ -11,10 +11,10 @@ func main() {
 	s := newStorage(newConn(connString))
 
 	for i := 0; i < goroutines; i++ {
-		go func(s *storage) {
+		go func(s *storage, pid int) {
 			p := newPing(s)
-			p.run()
-		}(s)
+			p.run(pid)
+		}(s, i)
 	}
 
 	log.Fatal(newHandler(s).init().run())

@@ -14,18 +14,17 @@ func newPing(storage *storage) *ping {
 	return &ping{storage: storage}
 }
 
-func (p *ping) run() {
-	var row test
+func (p *ping) run(pid int) {
+	var first test
 	var err error
 
 	for {
-		row, err = p.storage.first()
-
+		first, err = p.storage.first()
 		if err != nil {
-			log.Println(fmt.Sprintf("Background: Error, %s!", err.Error()))
+			log.Println(fmt.Sprintf("Background (%d): err: %s", pid, err))
 		} else {
-			log.Println(fmt.Sprintf("Background: ID: %s, Title: %s", row.ID, row.Title))
+			log.Println(fmt.Sprintf("Background (%d): ID: %s, Title: %s", pid, first.ID, first.Title))
 		}
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(time.Millisecond)
 	}
 }
