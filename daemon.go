@@ -6,15 +6,15 @@ import (
 	"time"
 )
 
-type ping struct {
+type daemon struct {
 	storage *storage
 }
 
-func newPing(storage *storage) *ping {
-	return &ping{storage: storage}
+func newDaemon(storage *storage) *daemon {
+	return &daemon{storage: storage}
 }
 
-func (p *ping) run(pid int) {
+func (p *daemon) run(pid int) {
 	var first test
 	var err error
 

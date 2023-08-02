@@ -12,7 +12,7 @@ func main() {
 
 	for i := 0; i < goroutines; i++ {
 		go func(s *storage, pid int) {
-			p := newPing(s)
+			p := newDaemon(s)
 			p.run(pid)
 		}(s, i)
 	}
