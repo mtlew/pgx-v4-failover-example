@@ -22,7 +22,9 @@ func (s *storage) first() (test, error) {
 	ctx := context.Background()
 
 	first := test{}
-	err := AcquireRetryOnceFunc(ctx, s.conn, func(conn *pgxpool.Conn) error {
+	// Uncomment for retries:
+	//err := AcquireRetryOnceFunc(ctx, s.conn, func(conn *pgxpool.Conn) error {
+	err := s.conn.AcquireFunc(ctx, func(conn *pgxpool.Conn) error {
 		row := conn.QueryRow(ctx, "SELECT id, title FROM test LIMIT 1")
 		if errScan := row.Scan(&first.ID, &first.Title); errScan != nil {
 			return errScan
@@ -39,7 +41,10 @@ func (s *storage) list() ([]test, error) {
 	ctx := context.Background()
 
 	tests := make([]test, 0)
-	err := AcquireRetryOnceFunc(ctx, s.conn, func(conn *pgxpool.Conn) error {
+
+	// Uncomment for retries:
+	//err := AcquireRetryOnceFunc(ctx, s.conn, func(conn *pgxpool.Conn) error {
+	err := s.conn.AcquireFunc(ctx, func(conn *pgxpool.Conn) error {
 		rows, errQuery := conn.Query(ctx, "SELECT id, title FROM test LIMIT 100")
 		defer rows.Close()
 
